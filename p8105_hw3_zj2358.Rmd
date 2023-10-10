@@ -1,0 +1,18 @@
+---
+title: "P8105_hw3_zj2358"
+author: "Zhezheng Jin"
+date: "2023-10-10"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$setecho = (TRUE, message=FALSE) 
+```
+
+## Problem 1
+
+```{r}
+library(p8105.datasets)
+data("instacart")
+```
+
