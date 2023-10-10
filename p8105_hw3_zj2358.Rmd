@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$setecho = (TRUE, message=FALSE) 
+knitr::opts_chunk$set(echo = TRUE, message=FALSE) 
 ```
 
 ## Problem 1
@@ -15,4 +15,10 @@ knitr::opts_chunk$setecho = (TRUE, message=FALSE)
 library(p8105.datasets)
 data("instacart")
 ```
+
+
+
+
+
+
 
