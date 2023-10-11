@@ -7,23 +7,26 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message=FALSE) 
+library(p8105.datasets)
+library(tidyverse)
+library(knitr)
 ```
 
 ## Problem 1
 
 ```{r}
-library(p8105.datasets)
-library(tidyverse)
-library(knitr)
 data("instacart")
 ```
+
 
 Description of the dataset:
 
 The dataset `instacart` has `r nrow(instacart)` observations and `r ncol(instacart)` variables. Variables in the dataset include `r colnames(instacart)`.
 Some key variables include unique order identifiers (`order_id`, e.g., 13749), the sequence products are added to the cart (`add_to_cart_order`, e.g., 2 for the second item), indicators for product reorders (`reordered`, e.g., 0 for previously ordered), the day an order was placed (`order_dow`, e.g., 2 for Tuesday), and specific product names (`product_name`, e.g., Clean Linen Candle).
 
+
 How many aisles are there, and which aisles are the most items ordered from?
+
 ```{r}
 num_aisles <- n_distinct(instacart$aisle)
 
@@ -36,6 +39,7 @@ top_aisle <- instacart %>%
 ```
 
 There are `r num_aisles` unique aisles, and the most items are ordered from the `r top_aisle`.
+
 
 Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
 
@@ -81,8 +85,92 @@ product_hour <- instacart %>%
 knitr::kable(product_hour, caption = "Mean Hour of Order by Product and Day of the Week", digits = 2)
 ```
 
+## Problem 2
+
+```{r}
+data("brfss_smart2010")
+```
+
+Data cleaning
+
+```{r}
+colnames(brfss_smart2010)
+brfss_smart2010 <- brfss_smart2010 %>%
+  rename(
+    location_abbr = Locationabbr,
+    location_desc = Locationdesc,
+    class_id = ClassId,
+    data_source = DataSource,
+    topic_id = TopicId,
+    location_id = LocationID,
+    question_id = QuestionID,
+    resp_id = RESPID,
+    geo_location = GeoLocation
+  ) %>%
+    janitor::clean_names() %>%
+  filter(topic == "Overall Health",
+         response %in% c("Excellent", "Very good", "Good", "Fair", "Poor")) %>%
+  mutate(response = factor(response, 
+                           levels = c("Poor", "Fair", "Good", "Very good", "Excellent"),
+                           ordered = TRUE))
+```
+
+In 2002, which states were observed at 7 or more locations? What about in 2010?
+
+```{r}
+states_with_7_or_more_locations <- brfss_smart2010 %>%
+  filter(year %in% c(2002, 2010)) %>%
+  group_by(year, location_abbr) %>%
+  summarise(num_entries = n_distinct(location_desc)) %>%
+  filter(num_entries >= 7)
+
+states_2002 <- states_with_7_or_more_locations %>%
+  filter(year == 2002)  %>%
+  pull(location_abbr)
+
+states_2010 <- states_with_7_or_more_locations %>%
+  filter(year == 2010) %>%
+  pull(location_abbr)
+```
+
+In 2002, states observed at 7 or more locations were `r paste(states_2002, collapse=", ")`. In 2010, states observed at 7 or more locations were `r paste(states_2010, collapse=", ")`. 
 
 
+Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. 
+
+```{r}
+excellent_responses <- brfss_smart2010 %>%
+  filter(response == "Excellent") %>%
+  group_by(year, location_abbr) %>%
+  summarise(avg_data_value = round(mean(data_value, na.rm = TRUE),2))
+```
+
+Make a “spaghetti” plot of this average value over time within a state 
+
+```{r}
+ggplot(excellent_responses, aes(x = year, y = avg_data_value, group = location_abbr)) +
+  geom_line(aes(color = location_abbr), alpha = 0.7) +
+  labs(title = "Average value trends for each state",
+       y = "Average Data Value") +
+  theme_minimal() 
+```
+
+Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
+
+```{r}
+ny <- brfss_smart2010 %>%
+  filter(year %in% c(2006, 2010) & location_abbr == "NY")
+
+ggplot(ny, aes(x = response, y = data_value)) +
+  geom_boxplot() +
+  facet_wrap(~ year, ncol = 2) +
+  labs(title = "Distribution of Data Value for responses in NY (2006 & 2010)",
+       y = "Data Value",
+       x = "Response") +
+  theme_minimal()
+```
+
+## Problem 3
 
 
 
