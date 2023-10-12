@@ -72,7 +72,7 @@ popular_items <- instacart %>%
 knitr::kable(popular_items,caption = "Top 3 Items in Selected Aisles", align = c('l', 'l', 'r'))
 ```
 
-Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week.
 
 ```{r}
 product_hour <- instacart %>%
@@ -227,7 +227,10 @@ knitr::kable(education_table,
              caption = "Number of Men and Women in Each Education Category")
 ```
 
-For the Table: Examine the counts for each gender within the education categories. Are there more males or females in specific education levels? Is there a noticeable difference?
+From the Table:
+
+The dataset contains a fairly balanced distribution of men and women across different education levels, with no extreme disparities in numbers. More males (`r education_table["Male", "High school equivalent"]`) have an education equivalent to high school compared to females (`r education_table["Female", "High school equivalent"]`). In contrast, for education levels beyond high school, females (`r education_table["Female", "More than high school"]`) outnumber males (`r education_table["Male", "More than high school"]`). 
+
 
 
 Visualization of the age distributions
@@ -242,17 +245,63 @@ ggplot(nhanes, aes(x = education, y = age, fill = sex)) +
   theme_minimal()
 ```
 
-For the Visualization:
+From the Visualization:
 
-Look at the median age (the horizontal line in the middle of the box) for each category. Which group is younger or older on average?
-Observe the spread (size of the box). Which group has a wider age range?
-Are there any outliers (points outside the "whiskers" of the boxplot)?
-
-
+The people from group with a education level more than high school are the youngest on average, compared to the people from group with a education level less than high school, who are the oldest on average.
+The group with a education level high school equivalent has a wider age range.
+The group with the largest gap in age distribution between male and female is the group with a education level of high school equivalent.
 
 
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+Create a total activity variable for each participant & Plotting 
 
-Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
+```{r}
+nhanes$total_activity <- rowSums(nhanes[, grep("^min", names(nhanes))])
+ggplot(nhanes, aes(x = age, y = total_activity, color = sex)) +
+  geom_point(aes(shape = sex), alpha = 0.5) + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  facet_wrap(~ education) + 
+  labs(title = "Total Activity with Age by Sex and Education Level",
+       x = "Age",
+       y = "Total Activity",
+       color = "Sex",
+       shape = "Sex") +
+  theme_minimal()
+```
 
+From the Visualization:
+
+The trend consistent across education levels. For all education levels, there is a negative correlation between the total activity and age, which means the total activity decrease with age, and the trend is the same for men and women.
+The group with the education level less than high school shows more total activity than the other two groups for both male and female.
+For groups of high school equivalent and more than high school, women always have more total activity than men at the same age.
+
+
+Make a three-panel plot
+
+```{r}
+nhanes_new <-nhanes %>%
+  pivot_longer(cols = starts_with("min"), 
+               names_to = "minute", 
+               values_to = "activity") %>%
+  mutate(minute = as.integer(gsub("min", "", minute)))
+
+ggplot(nhanes_new, aes(x = minute, y = activity, color = sex)) +
+  geom_line(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  facet_wrap(~ education, scales = "free_y", ncol = 1) +
+  scale_x_continuous(name = "Hour", breaks = seq(0, 1440, 60), labels = 0:24) +
+  labs(title = "24-hour Activity Time Courses by Education Level",
+       y = "Activity",
+       color = "Sex") +
+  theme_minimal()
+```
+
+From the Visualization, we can conclude that:
+
+1. There's nearly no gender difference in activity patterns across three education groups from the smooth trends.
+
+2. For all three groups, they are more active from about 9 am to 8 pm. 
+
+3. The average daily activity time of the three groups is ranked as: less than high school > high school equivalent > more than high school.
+
+4. The group with more than high school education shows more consistent activity with less peaks and troughs.
 
