@@ -155,6 +155,14 @@ ggplot(excellent_responses, aes(x = year, y = avg_data_value, group = location_a
   theme_minimal() 
 ```
 
+From the Visualization:
+
+The plot depicts the trends of "Excellent" responses over time, averaged across locations within each state. 
+There's a noticeable variance in the average values of these "Excellent" responses across states over the years.
+The dense overlapping of lines around the 20-25 mark suggests that a significant number of states had their "Excellent" responses average in this range during various years.
+
+
+
 Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
 ```{r}
@@ -169,6 +177,15 @@ ggplot(ny, aes(x = response, y = data_value)) +
        x = "Response") +
   theme_minimal()
 ```
+
+From the Visualization:
+
+For both years, the "Poor" response has the lowest median data value, as expected.
+The data values generally increase as we move from "Poor" to "Excellent," which is intuitive.
+The "Very good" and "Excellent" categories in 2006 have a similar median, but in 2010, the "Excellent" category has a slightly higher median.
+The IQR for "Fair" in 2006 seems wider compared to 2010, indicating more variability in the data values for that year.
+There's a noticeable difference in the "Good" category between the two years, with the median value being higher in 2010 than in 2006.
+
 
 ## Problem 3
 
