@@ -205,7 +205,7 @@ plot_2006 + plot_2010
 
 From the Visualization:
 
-The side-by-side layout of the two graphs facilitates easy comparison of data values between 2006 and 2010.
+The plot displays the health perceptions of residents across various New York counties for 2006 and 2010.
 While there is variation among counties, the overall distribution appears somewhat consistent between the two years.
 While many counties exhibit bars of similar heights between the two years (e.g., Kings County, Queens County), some show noticeable changes. For instance, the "Very good" category appears to decrease in some counties from 2006 to 2010, while others see an increase.
 
