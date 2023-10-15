@@ -68,13 +68,19 @@ aisle_plot <- instacart %>%
   summarise(item_count = n()) %>%
   filter(item_count > 10000) %>%
   arrange(-item_count)
+
 ggplot(aisle_plot, aes(x = reorder(aisle, item_count), y = item_count)) +
   geom_bar(stat="identity") +
+  geom_text(aes(label=item_count), position=position_dodge(width=0.9), hjust=-0.1, size=3) +
   coord_flip() + 
   labs(title = "Number of Items Ordered in Each Aisle",
        x = "Aisle",
        y = "Number of Items ordered") 
 ```
+
+The bar chart above visualizes the number of items ordered in each aisle, specifically for aisles that have more than 10,000 items ordered. The aisles are sorted in descending order based on the number of items ordered, making it easy to identify the most popular aisles.
+The `fresh vegetables` aisle is evidently the most popular, with the highest number of items ordered. This is closely followed by `fresh fruits` and `packaged vegetables fruits`.Aisles like `oils vinegars`, `dry pasta`, `canned meals beans`, and `butter` have the lowest order counts among those displayed, but they still have more than 10,000 orders.
+
 
 Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
 
@@ -90,6 +96,25 @@ popular_items <- instacart %>%
 knitr::kable(popular_items,caption = "Top 3 Items in Selected Aisles", align = c('l', 'l', 'r'))
 ```
 
+From the table above, it's clear that each aisle has distinct top-selling items. Here are the details:
+
+Baking Ingredients Aisle:
+
+The most ordered item is Light Brown Sugar with 499 orders.
+This is followed by Pure Baking Soda with 387 orders and Cane Sugar with 336 orders.
+
+Dog Food Care Aisle:
+
+The most ordered item in this aisle is Snack Sticks Chicken & Rice Recipe with 30 orders.
+Next is Organix Chicken & Brown Rice Recipe with 28 orders and Small Dog Biscuits with 26 orders. It's worth noting that the item counts for this aisle are notably lower than the other two aisles in the table.
+
+Packaged Vegetables Fruits Aisle:
+
+Dominating this category is Organic Baby Spinach with a significant 9,784 orders.
+Following this are Organic Raspberries with 5,546 orders and Organic Blueberries with 4,966 orders. All three items in this category have substantial order counts, indicating their popularity among shoppers.
+
+
+
 Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week.
 
 ```{r}
@@ -97,11 +122,24 @@ product_hour <- instacart %>%
   filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
   group_by(product_name, order_dow) %>%
   summarise(mean_hour = mean(order_hour_of_day, na.rm = TRUE), .groups = "drop") %>%
+  mutate(order_dow = case_when(
+    order_dow == 0 ~ "Monday",
+    order_dow == 1 ~ "Tuesday",
+    order_dow == 2 ~ "Wednesday",
+    order_dow == 3 ~ "Thursday",
+    order_dow == 4 ~ "Friday",
+    order_dow == 5 ~ "Saturday",
+    order_dow == 6 ~ "Sunday"
+  )) %>%
   spread(key = order_dow, value = mean_hour) %>%
-  select(product_name, `0`, `1`, `2`, `3`, `4`, `5`, `6`) 
+  select(product_name, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday") 
 
 knitr::kable(product_hour, caption = "Mean Hour of Order by Product and Day of the Week", digits = 2)
 ```
+
+The table illustrates the average hour of the day when "Coffee Ice Cream" and "Pink Lady Apples" are typically ordered throughout the week. For "Coffee Ice Cream," the mean ordering time revolves around the early to mid-afternoon across all days. The average order time starts at around 1:45 PM on Monday and reaches its latest around 3:30 PM on Thursday. In comparison, "Pink Lady Apples" consistently show an average ordering time during the early afternoon across the entire week. The time starts at about 11:30 AM on Tuesday and fluctuates slightly but stays around the early to mid-afternoon range for the rest of the days.
+
+
 
 ## Problem 2
 
