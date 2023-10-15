@@ -35,13 +35,14 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ```{r}
 data("instacart")
+instacart %>% head
 ```
 
 
 Description of the dataset:
 
 The dataset `instacart` has `r nrow(instacart)` observations and `r ncol(instacart)` variables. Variables in the dataset include `r colnames(instacart)`.
-Some key variables include unique order identifiers (`order_id`, e.g., 13749), the sequence products are added to the cart (`add_to_cart_order`, e.g., 2 for the second item), indicators for product reorders (`reordered`, e.g., 0 for previously ordered), the day an order was placed (`order_dow`, e.g., 2 for Tuesday), and specific product names (`product_name`, e.g., Clean Linen Candle).
+Some key variables include unique order identifiers (`order_id`, e.g., 13749), the sequence products are added to the cart (`add_to_cart_order`, e.g., 2 for the second item), indicators for product reorders (`reordered`, e.g., 0 for previously ordered), the day an order was placed (`order_dow`, e.g., 2 for Tuesday), and specific product names (`product_name`, e.g., Clean Linen Candle). Among these, there are 4 character variables and 11 numeric variables.
 
 
 How many aisles are there, and which aisles are the most items ordered from?
